@@ -10,9 +10,9 @@ default_header = ["Name", "Input Shape", "Output Shape", "FLOPs"]
 mydict = {
     "Dense":dense,
     "Conv2D":conv,
-    "Conv2DTranspose":conv,
+    "Conv2DTranspose":conv_transpose,
     "BatchNormalization": batch_norm,
-    "ReLu": zero
+    "ReLU": zero
 }
 
 
