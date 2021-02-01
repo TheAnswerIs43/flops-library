@@ -39,6 +39,13 @@ def conv(x:layers.Layer):
   flops += compute_act(x)
   return flops
 
+def conv_transpose(x:layers.Layer):
+  out = np.prod(x.input_shape[1:])
+  kernel_size = np.prod(x.kernel_size)
+  flops = 2 * out * (x.output_shape[-1] * kernel_size)
+  flops += compute_act(x)
+  return flops
+
 def batch_norm(x:layers.Layer):
   flops = np.prod(x.input_shape[1:])
   return flops*2
