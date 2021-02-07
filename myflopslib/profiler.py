@@ -33,13 +33,7 @@ class Profiler:
             key = layer.__class__.__name__
             if key in mydict.keys():
                 ops = mydict[key](layer)
-                input_size = "none"
-                output_size = "none"
-                if(hasattr(layer, "input_shape")):
-                    input_size = layer.input_shape
-                if(hasattr(layer, "output_shape")):
-                    output_size = layer.output_shape
-                self.table.add_row([key, input_size, output_size, ops])
+                self.table.add_row([key, layer.input_shape, layer.output_shape, ops])
                 self.flops += ops
             elif hasattr(layer, "layers"):
                 self.counter(layer, False)
