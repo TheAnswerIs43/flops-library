@@ -29,17 +29,18 @@ class Profiler:
         if not isinstance(mod, models.Model):
             print("Input Error")
             return 0
-        for layer in mod.layers[1:]:
-            key = layer.__class__.__name__
+        for layer in mod._nodes_by_depth.values():
+            val = layer[0].outbound_layer
+            key = val.__class__.__name__
             if key in mydict.keys():
-                ops = mydict[key](layer)
-                self.table.add_row([key, layer.input_shape, layer.output_shape, ops])
+                ops = mydict[key](val)
+                self.table.add_row([key, val.input_shape, val.output_shape, ops])
                 self.flops += ops
-            elif hasattr(layer, "layers"):
-                self.counter(layer, False)
+            elif hasattr(val, "layers"):
+                self.counter(val,False)
             else:
                 self.table.add_row([key,"Not Implemented","Not Implemented","Not Implemented"])
- 
+
         if bool(flag):
             print(self.table)
             print("Total Cost  :  " + str(self.flops)+" FLOPs\n")
