@@ -5,7 +5,7 @@ from myflopslib.myfunction import dense, conv, conv_transpose, batch_norm, zero,
 from prettytable import PrettyTable
 
 
-default_header = ["Name", "Input Shape", "Output Shape", "FLOPs"]
+default_header = ["Layer", "Name", "Input Shape", "Output Shape", "FLOPs"]
 
 mydict = {
     "Dense":dense,
@@ -30,17 +30,17 @@ class Profiler:
             print("Input Error")
             return 0
         for layer in mod._nodes_by_depth.values():
-            val = layer[0].outbound_layer
-            key = val.__class__.__name__
-            if key in mydict.keys():
-                ops = mydict[key](val)
-                self.table.add_row([key, val.input_shape, val.output_shape, ops])
-                self.flops += ops
-            elif hasattr(val, "layers"):
-                self.counter(val,False)
-            else:
-                self.table.add_row([key,"Not Implemented","Not Implemented","Not Implemented"])
-
+            for j in layer:
+                val = j.outbound_layer
+                key = val.__class__.__name__
+                if key in mydict.keys():
+                    ops = mydict[key](val)
+                    self.table.add_row([key, val.name, val.input_shape, val.output_shape, ops])
+                    self.flops += ops
+                elif hasattr(val, "layers"):
+                    self.counter(val,False)
+                else:
+                    self.table.add_row([key, val.name, "Not Implemented","Not Implemented","Not Implemented"])
         if bool(flag):
             print(self.table)
             print("Total Cost  :  " + str(self.flops)+" FLOPs\n")
