@@ -13,12 +13,12 @@ activation_function = {
 }
 
 def compute_act(x:layers.Layer):
-  flops = 0
   if hasattr(x, "activation"):
     key = x.activation.__name__
     if key in activation_function.keys():
-      flops += activation_function[key](x)
-  return flops
+      flops = activation_function[key](x)
+      return flops
+  return 0
 
 def dense(x:layers.Layer):
   inp = np.prod(x.input_shape[1:])
