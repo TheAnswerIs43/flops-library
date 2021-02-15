@@ -48,7 +48,7 @@ def conv_transpose(x:layers.Layer):
 
 def batch_norm(x:layers.Layer):
   flops = np.prod(x.input_shape[1:])
-  return 2*flops
+  return 4*flops
 
 def separable_conv(x:layers.Layer):
   first_out_channel = x.input_shape[-1] * x.depth_multiplier
