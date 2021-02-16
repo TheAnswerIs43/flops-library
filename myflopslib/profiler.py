@@ -1,11 +1,12 @@
 import numpy as np
 from tensorflow.keras import models
 from tensorflow.keras import layers 
-from myflopslib.myfunction import dense, conv, conv_transpose, batch_norm, zero, separable_conv, depthwise_conv, compute_act
 from prettytable import PrettyTable
+from myflopslib.myfunction import dense, conv, conv_transpose, batch_norm, zero, separable_conv, depthwise_conv, compute_act
+import matplotlib.pyplot as plt
 
 
-default_header = ["Layer", "Name","Input Shape", "Output Shape", "FLOPs"]
+default_header = ["Layer", "Name", "Mean", "Std", "FLOPs"]
 
 mydict = {
     "Dense":dense,
@@ -25,6 +26,9 @@ class Profiler:
 
     def __init__(self):
         self.flops = 0
+        self.fl = []
+        self.mn = []
+        self.lay_name = []
         self.table = None
 
     
@@ -38,8 +42,12 @@ class Profiler:
                 val = j.outbound_layer
                 key = val.__class__.__name__
                 if key in mydict.keys():
-                    ops = mydict[key](val)
-                    self.table.add_row([key, val.name, val.input_shape, val.output_shape, ops])
+                    ops, mean, std = mydict[key](val)
+                    self.table.add_row([key, val.name, mean, std, ops])
+                    if mean != 0 and ops !=0:
+                      self.fl.append(ops)
+                      self.mn.append(mean)
+                      self.lay_name.append(key)
                     self.flops += ops
                 elif hasattr(val, "layers"):
                     self.counter(val,False)
@@ -48,9 +56,19 @@ class Profiler:
 
         if bool(flag):
             print(self.table)
-            print("Total Cost  :  " + str(self.flops)+" FLOPs\n")
+            print("Total Cost  : {}  FLOPs\n".format(self.flops))
+            plt.plot(self.mn, self.fl, 'ro')
         
         return 0
+    
+    def get_graphics(self, s: str):
+      a = []
+      b = []
+      for i in zip(self.lay_name, self.mn, self.fl):
+        if i[0]==s:
+          a.append(i[1])
+          b.append(i[2])
+      plt.plot(a, b, 'ro')
     
     def compute_flops(self, mod: models.Model):
         self.flops = 0
