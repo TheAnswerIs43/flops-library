@@ -16,11 +16,11 @@ activation_function = {
 def compute_time(x:layers.Layer, n:int):
   print("computing time...")
   if n==1:
-    x_test = np.ones((100, x.input_shape[1]))
+    x_test = np.ones((2000, x.input_shape[1]))
   elif n==3:
-    x_test = np.ones((100, x.input_shape[1], x.input_shape[2], x.input_shape[3]))
+    x_test = np.ones((2000, x.input_shape[1], x.input_shape[2], x.input_shape[3]))
   arg = tf.convert_to_tensor(x_test, dtype=tf.float32)
-  steps = 50000
+  steps = 10000
   tt = np.zeros(steps)
   start_time = time.time()
   for i in range(steps):
